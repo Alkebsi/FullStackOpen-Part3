@@ -1,0 +1,17 @@
+{
+  "name": "Phonebook",
+  "version": "2.0.0",
+  "description": "This repository containes the source code for part 3, backend-web-development, special needs. I created this repo alone since I will need to use Render, or Fly.io, as a Node.js host. For that reason, I had to make this one in a special repo didecated for that reason! All in all, Part 3 is here.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mohammed Alkebsi (MKebsi)",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^3.0.1"
+  }
+}
