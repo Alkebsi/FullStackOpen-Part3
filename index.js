@@ -26,6 +26,20 @@ const persons = [
   },
 ];
 
+// Print info on the index.html instnace
+app.get('/info', (request, response) => {
+  const html = `
+    <p>Phonebook has info for {something} poeple</p>
+    <p>${Date()}</p>
+  `;
+
+  const entries = app.get('/api/persons', (request, response) => {
+    return response;
+  });
+
+  response.send(html);
+});
+
 // The notes JSON API response
 app.get('/api/persons', (request, response) => {
   response.json(persons);
