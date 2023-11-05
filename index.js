@@ -1,6 +1,7 @@
 // Express request
 const express = require('express');
 const app = express();
+app.use(express.json());
 
 // Initial data
 let persons = [
@@ -29,7 +30,7 @@ let persons = [
 // Print info on the index.html instnace
 app.get('/info', (request, response) => {
   const entries = persons.length;
-  
+
   const html = `
     <p>Phonebook has info for ${entries} poeple</p>
     <p>${Date()}</p>
@@ -61,6 +62,21 @@ app.delete('/api/persons/:id', (request, response) => {
   persons = persons.filter((note) => note.id !== id);
 
   response.status(204).end();
+});
+
+// Adding a RESTful resource to the persons API
+app.post('/api/persons', (request, response) => {
+  const body = request.body;
+
+  const note = {
+    id: Math.round(Math.random() * 100000),
+    name: body.name,
+    number: body.number,
+  };
+
+  persons = persons.concat(note);
+
+  response.json(note);
 });
 
 // Serving the backend to the browser
