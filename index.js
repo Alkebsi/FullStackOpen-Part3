@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 
 // Initial data
-const persons = [
+let persons = [
   {
     id: 1,
     name: 'Arto Hellas',
@@ -38,7 +38,7 @@ app.get('/info', (request, response) => {
   response.send(html);
 });
 
-// The notes JSON API response
+// The perosns JSON API response
 app.get('/api/persons', (request, response) => {
   response.json(persons);
 });
@@ -53,6 +53,14 @@ app.get('/api/persons/:id', (request, response) => {
   } else {
     response.status(404).end();
   }
+});
+
+// Deleting a RESTful resource / Accourding to its ID
+app.delete('/api/persons/:id', (request, response) => {
+  const id = Number(request.params.id);
+  persons = persons.filter((note) => note.id !== id);
+
+  response.status(204).end();
 });
 
 // Serving the backend to the browser
