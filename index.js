@@ -1,12 +1,22 @@
-// Importing Morgan
-const morgan = require('morgan');
-
 // Importing Express
 const express = require('express');
 const app = express();
 
+// Importing Morgan
+const morgan = require('morgan');
+
+// Configuring morgan
+morgan.token('body', (req, res) => {
+  return JSON.stringify(req.body); // I was imporvising in this line, and it worked!
+});
+
+const morganWare = morgan(
+  ':method :url :status :res[content-length] - :response-time ms :body'
+);
+
+// Setting Middlewares
 app.use(express.json());
-app.use(morgan('tiny'));
+app.use(morganWare);
 
 // Initial data
 let persons = [
