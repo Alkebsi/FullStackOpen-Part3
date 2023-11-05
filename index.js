@@ -28,14 +28,12 @@ const persons = [
 
 // Print info on the index.html instnace
 app.get('/info', (request, response) => {
+  const entries = persons.length;
+  
   const html = `
-    <p>Phonebook has info for {something} poeple</p>
+    <p>Phonebook has info for ${entries} poeple</p>
     <p>${Date()}</p>
   `;
-
-  const entries = app.get('/api/persons', (request, response) => {
-    return response;
-  });
 
   response.send(html);
 });
