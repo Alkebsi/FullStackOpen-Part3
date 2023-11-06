@@ -1,3 +1,6 @@
+// Importing CROS
+const cors = require('cors');
+
 // Importing Express
 const express = require('express');
 const app = express();
@@ -17,6 +20,7 @@ const morganWare = morgan(
 // Setting Middlewares
 app.use(express.json());
 app.use(morganWare);
+app.use(cors());
 
 // Initial data
 let persons = [
