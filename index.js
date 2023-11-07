@@ -21,6 +21,7 @@ const morganWare = morgan(
 app.use(express.json());
 app.use(morganWare);
 app.use(cors());
+app.use(express.static('dist'));
 
 // Initial data
 let persons = [
