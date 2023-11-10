@@ -78,10 +78,6 @@ app.post('/api/persons', (request, response) => {
     return response.status(400).json({
       error: 'content missing',
     });
-  } else if (false) {
-    return response.status(400).json({
-      error: 'dublicated name',
-    });
   }
 
   const person = Person({
