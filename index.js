@@ -29,34 +29,36 @@ app.use(express.static('dist'));
 // Getting the Mongoose module
 const Person = require('./modules/person');
 
-// Initial data
-let persons = [];
-
 // Print info on the index.html instnace
 app.get('/info', (request, response) => {
-  const entries = persons.length;
+  Person.find({}).then((people) => {
+    const html = `
+        <p>Phonebook has info for ${people.length} poeple</p>
+        <p>${Date()}</p>
+      `;
 
-  const html = `
-    <p>Phonebook has info for ${entries} poeple</p>
-    <p>${Date()}</p>
-  `;
-
-  response.send(html);
+    response.send(html);
+  });
 });
 
 // The perosns JSON API response
 app.get('/api/persons', (request, response) => {
   Person.find({}).then((people) => {
     response.json(people);
-    persons.concat(people);
   });
 });
 
 // Getting the REST API responses / accourding to their ID
-app.get('/api/persons/:id', (request, response) => {
-  Person.findById(request.params.id).then((person) => {
-    response.json(person);
-  });
+app.get('/api/persons/:id', (request, response, next) => {
+  Person.findById(request.params.id)
+    .then((person) => {
+      if (person) {
+        response.json(person);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
 // Deleting a RESTful resource / Accourding to its ID
@@ -76,7 +78,7 @@ app.post('/api/persons', (request, response) => {
     return response.status(400).json({
       error: 'content missing',
     });
-  } else if (persons.find((p) => p.name === body.name)) {
+  } else if (false) {
     return response.status(400).json({
       error: 'dublicated name',
     });
@@ -92,6 +94,18 @@ app.post('/api/persons', (request, response) => {
     response.json(person);
   });
 });
+
+const errorHandler = (error, request, response, next) => {
+  console.log(error.message);
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformated id' });
+  }
+
+  next(error);
+};
+
+app.use(errorHandler);
 
 // Serving the backend to the browser
 const PORT = process.env.PORT;
