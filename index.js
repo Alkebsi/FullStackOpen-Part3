@@ -1,3 +1,6 @@
+// Importing DotEnv
+require('dotenv').config();
+
 // Importing CROS
 const cors = require('cors');
 
@@ -23,29 +26,11 @@ app.use(morganWare);
 app.use(cors());
 app.use(express.static('dist'));
 
+// Getting the Mongoose module
+const Person = require('./modules/person')
+
 // Initial data
-let persons = [
-  {
-    id: 1,
-    name: 'Arto Hellas',
-    number: '040-123456',
-  },
-  {
-    id: 2,
-    name: 'Ada Lovelace',
-    number: '39-44-5323523',
-  },
-  {
-    id: 3,
-    name: 'Dan Abramov',
-    number: '12-43-234345',
-  },
-  {
-    id: 4,
-    name: 'Mary Poppendieck',
-    number: '39-23-6423122',
-  },
-];
+let persons = [];
 
 // Print info on the index.html instnace
 app.get('/info', (request, response) => {
@@ -61,25 +46,23 @@ app.get('/info', (request, response) => {
 
 // The perosns JSON API response
 app.get('/api/persons', (request, response) => {
-  response.json(persons);
+  Person.find({}).then((people) => {
+    response.json(people);
+    persons.concat(people);
+  });
 });
 
 // Getting the REST API responses / accourding to their ID
 app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id);
-  const note = persons.find((note) => note.id === id);
-
-  if (note) {
-    response.json(note);
-  } else {
-    response.status(404).end();
-  }
+  Person.findById(request.params.id).then((person) => {
+    response.json(person);
+  });
 });
 
 // Deleting a RESTful resource / Accourding to its ID
 app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id);
-  persons = persons.filter((note) => note.id !== id);
+  persons = persons.filter((person) => person.id !== id);
 
   response.status(204).end();
 });
@@ -98,19 +81,19 @@ app.post('/api/persons', (request, response) => {
     });
   }
 
-  const note = {
-    id: Math.round(Math.random() * 100000),
+  const person = Person({
+    // id: Math.round(Math.random() * 100000),
     name: body.name,
     number: body.number,
-  };
+  });
 
-  persons = persons.concat(note);
-
-  response.json(note);
+  person.save().then((savedPerson) => {
+    response.json(person);
+  });
 });
 
 // Serving the backend to the browser
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
