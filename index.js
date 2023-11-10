@@ -27,7 +27,7 @@ app.use(cors());
 app.use(express.static('dist'));
 
 // Getting the Mongoose module
-const Person = require('./modules/person')
+const Person = require('./modules/person');
 
 // Initial data
 let persons = [];
@@ -60,11 +60,12 @@ app.get('/api/persons/:id', (request, response) => {
 });
 
 // Deleting a RESTful resource / Accourding to its ID
-app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id);
-  persons = persons.filter((person) => person.id !== id);
-
-  response.status(204).end();
+app.delete('/api/persons/:id', (request, response, next) => {
+  Person.findByIdAndDelete(request.params.id)
+    .then((result) => {
+      response.status(204).end();
+    })
+    .catch((error) => next(error));
 });
 
 // Adding a RESTful resource to the persons API
