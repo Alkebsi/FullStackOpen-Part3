@@ -24,7 +24,7 @@ const morganWare = morgan(
 app.use(express.json());
 app.use(morganWare);
 app.use(cors());
-app.use(express.static('dist'));
+app.use(express.static('build'));
 
 // Getting the Mongoose module
 const Person = require('./modules/person');
