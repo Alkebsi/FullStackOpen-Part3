@@ -50,9 +50,13 @@ const App = () => {
             }, 3000);
           })
           .catch((error) => {
-            setErrorMessage(
-              `Information of ${newName} has already been removed from server!`
-            );
+            if (error.response.data.error.match(/(Validation failed:)/g)) {
+              setErrorMessage(error.response.data.error);
+            } else {
+              setErrorMessage(
+                `Information of ${newName} has already been removed from server!`
+              );
+            }
 
             setTimeout(() => {
               setErrorMessage(null);
@@ -74,7 +78,7 @@ const App = () => {
           });
         })
         .catch((error) => {
-          setErrorMessage(error.response.data.error)
+          setErrorMessage(error.response.data.error);
         });
 
       setTimeout(() => {

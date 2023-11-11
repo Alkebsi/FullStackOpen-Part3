@@ -23,7 +23,16 @@ const personSchema = new mongoose.Schema({
     minLength: 3,
     require: true,
   },
-  number: String,
+  number: {
+    type: String,
+    validate: {
+      validator: function (arr) {
+        return /(\d{2}-\d{8,})|(\d{3}-\d{8,})/.test(arr);
+      },
+      message: 'Wrong Formation: e.g. 09-1234556 or 040-22334455',
+    },
+    required: true,
+  },
 });
 
 personSchema.set('toJSON', {
