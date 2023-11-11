@@ -12,8 +12,7 @@ const password = process.argv[2];
 const name = process.argv[3];
 const number = process.argv[4];
 
-// const url = `mongodb+srv://environment:${password}@cluster0.1n7nfri.mongodb.net/?retryWrites=true&w=majority`;
-const url = `mongodb://localhost:27017/contactApp`;
+const url = `mongodb+srv://environment:${password}@cluster0.1n7nfri.mongodb.net/?retryWrites=true&w=majority`;
 
 mongoose.set('strictQuery', false);
 mongoose.connect(url);
@@ -29,17 +28,17 @@ const Person = mongoose.model('Person', personSchema);
 if (number && name) {
   const person = new Person({ name, number });
 
-  person.save().then((result) => {
+  person.save().then(() => {
     console.log(`added ${name} number ${number} to phonebook`);
     mongoose.connection.close();
   });
 } else {
   Person.find({}).then((result) => {
-    console.log(`\nphonebook:`);
+    console.log('\nphonebook:');
     result.forEach((person) => {
       console.log(`${person._doc.name} ${person._doc.number}`);
     });
-    console.log(`\n`);
+    console.log('\n');
     mongoose.connection.close();
   });
 }

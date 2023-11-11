@@ -12,8 +12,8 @@ const app = express();
 const morgan = require('morgan');
 
 // Configuring morgan
-morgan.token('body', (req, res) => {
-  return JSON.stringify(req.body); // I was imporvising in this line, and it worked!
+morgan.token('body', (request) => {
+  return JSON.stringify(request.body); // I was imporvising in this line, and it worked!
 });
 
 const morganWare = morgan(
@@ -64,7 +64,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 // Deleting a RESTful resource / Accourding to its ID
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then((result) => {
+    .then(() => {
       response.status(204).end();
     })
     .catch((error) => next(error));
@@ -95,7 +95,7 @@ app.post('/api/persons', (request, response, next) => {
 
     person
       .save()
-      .then((savedPerson) => {
+      .then(() => {
         response.json(person);
       })
       .catch((error) => next(error));
@@ -124,9 +124,9 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformated id' });
   } else if (error.name === 'ValidationError') {
-    return response.status(400).json({ error: error.message })
+    return response.status(400).json({ error: error.message });
   }
-  
+
   next(error);
 };
 
