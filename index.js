@@ -1,5 +1,5 @@
 // Importing DotEnv
-require('dotenv').config();
+// require('dotenv').config();
 
 // Importing CROS
 const cors = require('cors');
