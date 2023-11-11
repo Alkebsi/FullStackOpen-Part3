@@ -62,18 +62,24 @@ const App = () => {
           });
       }
     } else {
-      personService.create(personsObj).then((data) => {
-        personService.getAll().then((data) => {
-          setPersons(persons.concat(personsObj));
-          setPersons(data);
+      personService
+        .create(personsObj)
+        .then((data) => {
+          personService.getAll().then((data) => {
+            setPersons(persons.concat(personsObj));
+            setPersons(data);
+            setSuccessMessage(
+              `Added ${personsObj.name}'s informations successfully!`
+            );
+          });
+        })
+        .catch((error) => {
+          setErrorMessage(error.response.data.error)
         });
-      });
 
-      setSuccessMessage(
-        `Added ${personsObj.name}'s informations successfully!`
-      );
       setTimeout(() => {
         setSuccessMessage(null);
+        setErrorMessage(null);
       }, 3000);
     }
 

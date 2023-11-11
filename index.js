@@ -71,7 +71,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
 });
 
 // Adding a RESTful resource to the persons API
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body;
 
   if (!body.name || !body.number) {
@@ -80,14 +80,25 @@ app.post('/api/persons', (request, response) => {
     });
   }
 
-  const person = Person({
-    // id: Math.round(Math.random() * 100000),
-    name: body.name,
-    number: body.number,
-  });
+  Person.find({}).then((people) => {
+    if (people.find((p) => p.name === body.name)) {
+      return response.status(400).json({
+        error: 'dublicated name',
+      });
+    }
 
-  person.save().then((savedPerson) => {
-    response.json(person);
+    const person = Person({
+      // id: Math.round(Math.random() * 100000),
+      name: body.name,
+      number: body.number,
+    });
+
+    person
+      .save()
+      .then((savedPerson) => {
+        response.json(person);
+      })
+      .catch((error) => next(error));
   });
 });
 
@@ -112,8 +123,10 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformated id' });
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   }
-
+  
   next(error);
 };
 
