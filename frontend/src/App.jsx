@@ -68,7 +68,7 @@ const App = () => {
     } else {
       personService
         .create(personsObj)
-        .then((data) => {
+        .then(() => {
           personService.getAll().then((data) => {
             setPersons(persons.concat(personsObj));
             setPersons(data);

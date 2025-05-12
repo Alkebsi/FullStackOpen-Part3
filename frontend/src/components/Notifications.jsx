@@ -3,10 +3,10 @@ const Notifications = ({ message, type }) => {
     return null;
   }
 
-  if (type === 'success') 
+  if (type === 'success')
     return <div className="success">{message}</div>;
 
-  if (type === 'error') 
+  if (type === 'error')
     return <div className="error">{message}</div>;
 };
 
