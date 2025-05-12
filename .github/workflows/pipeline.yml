@@ -1,0 +1,59 @@
+name: Deployment Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+
+jobs:
+  simple_deployment_pipeline:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install & Build Source
+        run: cd ./frontend && npm install && cd ../ && npm install && npm run build:ui
+      - name: Trigger Deployment
+        if: github.event_name == 'push'
+        run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
+
+      - name: Success Discord Notification
+        uses: rjstone/discord-webhook-notify@v1
+        if: success() && github.event_name == 'push'
+        with:
+            severity: info
+            username: Not_Unhappy_Bot
+            color: '#00ff00'
+            details: to https://mkebsi-openfullstack-part3.onrender.com/ by ${{ github.actor }}
+            text: A new version of Pokedex deployed
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Failure Discord Notification
+        uses: rjstone/discord-webhook-notify@v1
+        if: failure()
+        with:
+            severity: error
+            username: So_Sad_Bot
+            color: '#ff0000'
+            details: commit ${{ github.event.head_commit.url }} by ${{ github.actor }} broke the build!
+            text: build failed
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
+  tag_release:
+    needs: [simple_deployment_pipeline]
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
+
+      - name: Bump version and push tag
+        if: github.event_name == 'push' && !contains(github.event.head_commit.message, '#skip')
+        uses: anothrNick/github-tag-action@1.73.0
+        env:
+          DEFAULT_BUMP: patch
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
