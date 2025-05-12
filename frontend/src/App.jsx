@@ -41,7 +41,6 @@ const App = () => {
           .update(existing.id, personsObj)
           .then(() => {
             setUpdateData(updateData + 1);
-
             setSuccessMessage(
               `Updated ${existing.name}'s number successfully!`
             );
